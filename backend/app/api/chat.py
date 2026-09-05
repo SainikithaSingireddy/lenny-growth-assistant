@@ -1,67 +1,41 @@
-from fastapi import APIRouter, Depends
-from sqlalchemy.ext.asyncio import AsyncSession
-
-from app.database import get_db
-from app.models.db_models import Message
-from app.models.schemas import ChatRequest
+from fastapi import APIRouter
 from app.rag.retriever import retrieve_context
 from app.providers.ollama_provider import OllamaProvider
-from app.skills.artifact_generator import generate_html
+from app.providers.gemini_provider import GeminiProvider
+from app.config import settings
 
 router = APIRouter(prefix="/chat", tags=["Chat"])
 
-provider = OllamaProvider()
-
+provider = (
+    GeminiProvider()
+    if settings.DEFAULT_PROVIDER == "gemini"
+    else OllamaProvider()
+)
 
 @router.post("/")
-async def chat(payload: ChatRequest, db: AsyncSession = Depends(get_db)):
-
-    context = retrieve_context(payload.message)
+async def chat(payload: dict):
+    context = retrieve_context(payload["message"])
 
     prompt = f"""
 You are The Lenny Growth Assistant.
 
 RULES:
-- Answer ONLY from the transcript.
-- If information is missing, say:
+- Answer ONLY from the transcript below.
+- If the answer is not present, say exactly:
   "The transcript does not contain this information."
-- Mention the source.
+- Mention the source filename.
 
 TRANSCRIPT:
 {context}
 
 QUESTION:
-{payload.message}
+{payload["message"]}
 """
 
     answer = await provider.generate(prompt)
 
-    db.add(
-        Message(
-            session_id=payload.session_id,
-            role="user",
-            content=payload.message,
-        )
-    )
-
-    db.add(
-        Message(
-            session_id=payload.session_id,
-            role="assistant",
-            content=answer,
-        )
-    )
-
-    await db.commit()
-
-    artifact = generate_html(
-        "Growth Insight",
-        answer.replace("\n", "<br>")
-    )
-
     return {
         "answer": answer,
-        "artifact_html": artifact,
-        "source": "Transcript",
+        "source": "agent_transcripts",
         "context_used": True
     }
