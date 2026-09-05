@@ -1,9 +1,11 @@
-
 from pydantic import BaseModel
 from dotenv import load_dotenv
+from pathlib import Path
 import os
 
-load_dotenv()
+# Load .env from the project root
+env_path = Path(__file__).resolve().parents[2] / ".env"
+load_dotenv(env_path)
 
 class Settings(BaseModel):
     APP_NAME: str = "Lenny Growth Assistant"
@@ -14,7 +16,6 @@ class Settings(BaseModel):
     )
 
     DEFAULT_PROVIDER: str = os.getenv("DEFAULT_PROVIDER", "ollama")
-
     OLLAMA_MODEL: str = os.getenv("OLLAMA_MODEL", "llama3.2:3b")
     OLLAMA_URL: str = os.getenv("OLLAMA_URL", "http://localhost:11434")
 
