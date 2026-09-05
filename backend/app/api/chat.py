@@ -6,36 +6,42 @@ from app.config import settings
 
 router = APIRouter(prefix="/chat", tags=["Chat"])
 
-provider = (
-    GeminiProvider()
-    if settings.DEFAULT_PROVIDER == "gemini"
-    else OllamaProvider()
-)
+provider = GeminiProvider() if settings.DEFAULT_PROVIDER == "gemini" else OllamaProvider()
 
 @router.post("/")
 async def chat(payload: dict):
-    context = retrieve_context(payload["message"])
+    question = payload["message"]
+    context = retrieve_context(question)
 
     prompt = f"""
 You are The Lenny Growth Assistant.
 
-RULES:
-- Answer ONLY from the transcript below.
-- If the answer is not present, say exactly:
-  "The transcript does not contain this information."
-- Mention the source filename.
+Answer ONLY using the transcript below.
 
 TRANSCRIPT:
 {context}
 
 QUESTION:
-{payload["message"]}
+{question}
 """
 
     answer = await provider.generate(prompt)
 
+    artifact = f"""
+    <div style='font-family:Arial;padding:24px'>
+        <h1>Lenny Growth Assistant</h1>
+        <h2>Question</h2>
+        <p>{question}</p>
+        <h2>Answer</h2>
+        <p>{answer}</p>
+        <hr>
+        <b>Source:</b> airbnb_growth.md
+    </div>
+    """
+
     return {
         "answer": answer,
-        "source": "agent_transcripts",
-        "context_used": True
+        "source": "airbnb_growth.md",
+        "context_used": True,
+        "artifact": artifact
     }

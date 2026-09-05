@@ -15,7 +15,7 @@ interface ChatMessage {
 }
 
 export default function ChatPane({ onArtifact }: Props) {
-  const [provider, setProvider] = useState("ollama");
+  const [provider, setProvider] = useState("gemini");
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -26,9 +26,11 @@ export default function ChatPane({ onArtifact }: Props) {
 
     if (!message.trim()) return;
 
+    onArtifact("");
+
     setMessages((prev) => [
       ...prev,
-      { role: "user", content: message }
+      { role: "user", content: message },
     ]);
 
     setInput("");
@@ -41,30 +43,30 @@ export default function ChatPane({ onArtifact }: Props) {
         ...prev,
         {
           role: "assistant",
-          content: data.answer
-        }
+          content: data.answer,
+        },
       ]);
 
-      if (data.artifact_html) {
-        onArtifact(data.artifact_html);
+      if (data.artifact) {
+        onArtifact(data.artifact);
       }
     } catch {
       setMessages((prev) => [
         ...prev,
         {
           role: "assistant",
-          content: "Unable to connect to the backend."
-        }
+          content: "Unable to connect to the backend.",
+        },
       ]);
+    } finally {
+      setLoading(false);
     }
-
-    setLoading(false);
   }
 
   const suggestedQuestions = [
     "How did Airbnb improve onboarding?",
     "What activation metrics did the guest recommend?",
-    "How did the team reduce signup friction?"
+    "How did the team reduce signup friction?",
   ];
 
   return (
@@ -72,7 +74,7 @@ export default function ChatPane({ onArtifact }: Props) {
       style={{
         display: "flex",
         flexDirection: "column",
-        height: "100%"
+        height: "100%",
       }}
     >
       {/* Header */}
@@ -81,7 +83,7 @@ export default function ChatPane({ onArtifact }: Props) {
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
-          marginBottom: 16
+          marginBottom: 16,
         }}
       >
         <div>
@@ -90,7 +92,7 @@ export default function ChatPane({ onArtifact }: Props) {
             style={{
               margin: "4px 0",
               color: "#64748b",
-              fontSize: 14
+              fontSize: 14,
             }}
           >
             Ask questions about Lenny's podcast
@@ -110,14 +112,14 @@ export default function ChatPane({ onArtifact }: Props) {
           border: "1px solid #e5e7eb",
           borderRadius: 12,
           padding: 16,
-          background: "#f8fafc"
+          background: "#f8fafc",
         }}
       >
         {messages.length === 0 ? (
           <div
             style={{
               textAlign: "center",
-              marginTop: 40
+              marginTop: 40,
             }}
           >
             <h3 style={{ marginBottom: 8 }}>
@@ -133,7 +135,7 @@ export default function ChatPane({ onArtifact }: Props) {
                 marginTop: 24,
                 display: "flex",
                 flexDirection: "column",
-                gap: 10
+                gap: 10,
               }}
             >
               {suggestedQuestions.map((q, i) => (
@@ -146,7 +148,7 @@ export default function ChatPane({ onArtifact }: Props) {
                     borderRadius: 10,
                     border: "1px solid #dbe4f0",
                     background: "white",
-                    cursor: "pointer"
+                    cursor: "pointer",
                   }}
                 >
                   {q}
@@ -169,7 +171,7 @@ export default function ChatPane({ onArtifact }: Props) {
             style={{
               marginTop: 10,
               color: "#64748b",
-              fontStyle: "italic"
+              fontStyle: "italic",
             }}
           >
             Assistant is thinking...
@@ -190,7 +192,7 @@ export default function ChatPane({ onArtifact }: Props) {
           borderRadius: 10,
           border: "1px solid #d1d5db",
           resize: "none",
-          fontSize: 15
+          fontSize: 15,
         }}
       />
 
@@ -205,7 +207,7 @@ export default function ChatPane({ onArtifact }: Props) {
           border: "none",
           borderRadius: 10,
           fontWeight: 600,
-          cursor: loading ? "not-allowed" : "pointer"
+          cursor: loading ? "not-allowed" : "pointer",
         }}
       >
         {loading ? "Generating..." : "Ask Assistant"}

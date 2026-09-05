@@ -17,12 +17,7 @@ export default function Home() {
         padding: 24,
       }}
     >
-      <div
-        style={{
-          maxWidth: 1400,
-          margin: "0 auto",
-        }}
-      >
+      <div style={{ maxWidth: 1400, margin: "0 auto" }}>
         <div style={{ marginBottom: 20 }}>
           <h1 style={{ margin: 0 }}>Lenny Growth Assistant</h1>
 
@@ -41,7 +36,6 @@ export default function Home() {
             gap: 20,
           }}
         >
-          {/* Sidebar */}
           <div
             style={{
               background: "white",
@@ -53,7 +47,6 @@ export default function Home() {
             <SessionSidebar />
           </div>
 
-          {/* Chat */}
           <div
             style={{
               background: "white",
@@ -64,7 +57,6 @@ export default function Home() {
             <ChatPane onArtifact={setArtifact} />
           </div>
 
-          {/* Artifact Viewer - Only show when an artifact exists */}
           {artifact && (
             <div
               style={{
