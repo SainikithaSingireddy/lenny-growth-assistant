@@ -6,6 +6,7 @@ from app.models.db_models import ChatSession, Message
 from app.api.health import router as health_router
 from app.api.sessions import router as session_router
 from app.api.chat import router as chat_router
+from app.api.sessions import router as sessions_router
 
 app = FastAPI(
     title=settings.APP_NAME,
@@ -42,3 +43,4 @@ async def startup():
 app.include_router(health_router)
 app.include_router(session_router)
 app.include_router(chat_router)
+app.include_router(sessions_router)

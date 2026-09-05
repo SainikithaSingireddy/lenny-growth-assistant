@@ -1,12 +1,19 @@
-def generate_ship30(topic: str, context: str):
+def generate_ship30(topic: str, insight: str):
+
     return f"""
 # {topic}
 
-## Insight
+## Core Insight
 
-{context}
+{insight}
 
-## Takeaway
+## Actionable Takeaway
 
-Great products grow by reducing user friction and improving activation.
+- Reduce friction
+- Improve activation
+- Iterate using user feedback
+
+## Closing
+
+Great products win by making the first user experience effortless.
 """
