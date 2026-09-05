@@ -7,12 +7,15 @@ interface Session {
   title: string;
 }
 
+const BASE =
+  process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
+
 export default function SessionSidebar() {
   const [sessions, setSessions] = useState<Session[]>([]);
   const [activeId, setActiveId] = useState<number | null>(null);
 
   async function loadSessions() {
-    const res = await fetch("http://127.0.0.1:8000/sessions/");
+    const res = await fetch(`${BASE}/sessions/`);
     const data = await res.json();
 
     setSessions(data);
@@ -23,31 +26,34 @@ export default function SessionSidebar() {
   }
 
   async function createSession() {
-    const res = await fetch("http://127.0.0.1:8000/sessions/", {
+    const res = await fetch(`${BASE}/sessions/`, {
       method: "POST",
     });
 
     const newSession = await res.json();
 
     await loadSessions();
-
     setActiveId(newSession.id);
   }
 
   useEffect(() => {
-    async function initialize() {
-      const res = await fetch("http://127.0.0.1:8000/sessions/");
-      const data = await res.json();
+    const initialize = async () => {
+      try {
+        const res = await fetch(`${BASE}/sessions/`);
+        const data = await res.json();
 
-      // Create one session only if database is empty
-      if (data.length === 0) {
-        await fetch("http://127.0.0.1:8000/sessions/", {
-          method: "POST",
-        });
+        // Create ONLY ONE initial conversation
+        if (data.length === 0) {
+          await fetch(`${BASE}/sessions/`, {
+            method: "POST",
+          });
+        }
+
+        await loadSessions();
+      } catch (err) {
+        console.error(err);
       }
-
-      await loadSessions();
-    }
+    };
 
     initialize();
   }, []);

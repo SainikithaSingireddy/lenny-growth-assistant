@@ -1,9 +1,9 @@
 const BASE =
-  process.env.NEXT_PUBLIC_API_URL ?? "http://127.0.0.1:8000";
+  process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
 
 export async function askQuestion(
   message: string,
-  provider: string = "ollama"
+  provider: string = "gemini"
 ) {
   const response = await fetch(`${BASE}/chat/`, {
     method: "POST",

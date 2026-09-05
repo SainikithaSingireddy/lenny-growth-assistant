@@ -28,17 +28,20 @@ export default function Home() {
 
           <p style={{ color: "#64748b" }}>
             Enterprise RAG Assistant powered by FastAPI, PostgreSQL, pgvector &
-            Ollama
+            Gemini
           </p>
         </div>
 
         <div
           style={{
             display: "grid",
-            gridTemplateColumns: "250px 2fr 1fr",
+            gridTemplateColumns: artifact
+              ? "250px 2fr 1fr"
+              : "250px 1fr",
             gap: 20,
           }}
         >
+          {/* Sidebar */}
           <div
             style={{
               background: "white",
@@ -47,10 +50,10 @@ export default function Home() {
             }}
           >
             <h3>Sessions</h3>
-
             <SessionSidebar />
           </div>
 
+          {/* Chat */}
           <div
             style={{
               background: "white",
@@ -61,15 +64,18 @@ export default function Home() {
             <ChatPane onArtifact={setArtifact} />
           </div>
 
-          <div
-            style={{
-              background: "white",
-              borderRadius: 14,
-              padding: 18,
-            }}
-          >
-            <ArtifactViewer html={artifact} />
-          </div>
+          {/* Artifact Viewer - Only show when an artifact exists */}
+          {artifact && (
+            <div
+              style={{
+                background: "white",
+                borderRadius: 14,
+                padding: 18,
+              }}
+            >
+              <ArtifactViewer html={artifact} />
+            </div>
+          )}
         </div>
       </div>
     </main>
