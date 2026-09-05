@@ -1,20 +1,24 @@
-const BASE = "http://127.0.0.1:8000";
+const BASE =
+  process.env.NEXT_PUBLIC_API_URL ?? "http://127.0.0.1:8000";
 
 export async function askQuestion(
   message: string,
-  provider: string
-){
-  const res = await fetch(`${BASE}/chat/`,{
-    method:"POST",
-    headers:{
-      "Content-Type":"application/json"
+  provider: string = "ollama"
+) {
+  const response = await fetch(`${BASE}/chat/`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
     },
-    body:JSON.stringify({
-      session_id:1,
+    body: JSON.stringify({
       message,
-      provider
-    })
+      provider,
+    }),
   });
 
-  return await res.json();
+  if (!response.ok) {
+    throw new Error("Failed to connect to backend");
+  }
+
+  return response.json();
 }
