@@ -1,22 +1,15 @@
-from pydantic import BaseModel
-from dotenv import load_dotenv
-from pathlib import Path
 import os
 
-# Load .env from the project root
-env_path = Path(__file__).resolve().parents[2] / ".env"
-load_dotenv(env_path)
+class Settings:
+    APP_NAME = "Lenny Growth Assistant"
 
-class Settings(BaseModel):
-    APP_NAME: str = "Lenny Growth Assistant"
+    DATABASE_URL = os.getenv("DATABASE_URL")
 
-    DATABASE_URL: str = os.getenv(
-        "DATABASE_URL",
-        "postgresql+asyncpg://postgres:password@localhost:5432/lenny_db"
-    )
+    DEFAULT_PROVIDER = os.getenv("DEFAULT_PROVIDER", "openai")
 
-    DEFAULT_PROVIDER: str = os.getenv("DEFAULT_PROVIDER", "ollama")
-    OLLAMA_MODEL: str = os.getenv("OLLAMA_MODEL", "llama3.2:3b")
-    OLLAMA_URL: str = os.getenv("OLLAMA_URL", "http://localhost:11434")
+    OLLAMA_MODEL = os.getenv("OLLAMA_MODEL", "llama3.2:3b")
+    OLLAMA_URL = os.getenv("OLLAMA_URL", "http://localhost:11434")
+
+    OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "")
 
 settings = Settings()
